@@ -269,7 +269,12 @@ func (w *Webcam) StopStreaming() error {
 		}
 	}
 
-	return stopStreaming(w.fd)
+	if err := stopStreaming(w.fd); err != nil {
+		return err
+	}
+
+	bufCount := uint32(0)
+	return mmapRequestBuffers(w.fd, &bufCount)
 }
 
 // Close the device
