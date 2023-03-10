@@ -130,7 +130,7 @@ type v4l2_frmsize_stepwise struct {
 	Step_height uint32
 }
 
-//Hack to make go compiler properly align union
+// Hack to make go compiler properly align union
 type v4l2_format_aligned_union struct {
 	data [200 - unsafe.Sizeof(__p)]byte
 	_    unsafe.Pointer
@@ -226,9 +226,9 @@ type v4l2_streamparm struct {
 	union v4l2_streamparm_union
 }
 
-func checkCapabilities(fd uintptr) (supportsVideoCapture bool, supportsVideoStreaming bool, err error) {
+func checkCapabilities(fd uintptr) (caps *v4l2_capability, err error) {
 
-	caps := &v4l2_capability{}
+	caps = &v4l2_capability{}
 
 	err = ioctl.Ioctl(fd, VIDIOC_QUERYCAP, uintptr(unsafe.Pointer(caps)))
 
@@ -236,8 +236,6 @@ func checkCapabilities(fd uintptr) (supportsVideoCapture bool, supportsVideoStre
 		return
 	}
 
-	supportsVideoCapture = (caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) != 0
-	supportsVideoStreaming = (caps.capabilities & V4L2_CAP_STREAMING) != 0
 	return
 
 }

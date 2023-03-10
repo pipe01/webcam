@@ -39,17 +39,17 @@ func Open(path string) (*Webcam, error) {
 		return nil, err
 	}
 
-	supportsVideoCapture, supportsVideoStreaming, err := checkCapabilities(fd)
+	caps, err := checkCapabilities(fd)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if !supportsVideoCapture {
+	if (caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) == 0 {
 		return nil, errors.New("Not a video capture device")
 	}
 
-	if !supportsVideoStreaming {
+	if (caps.capabilities & V4L2_CAP_STREAMING) == 0 {
 		return nil, errors.New("Device does not support the streaming I/O method")
 	}
 
