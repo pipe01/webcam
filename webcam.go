@@ -6,6 +6,7 @@ package webcam
 import (
 	"errors"
 	"reflect"
+	"strings"
 	"unsafe"
 
 	"golang.org/x/sys/unix"
@@ -57,6 +58,19 @@ func Open(path string) (*Webcam, error) {
 	w.fd = uintptr(fd)
 	w.bufcount = 256
 	return w, nil
+}
+
+func (w *Webcam) GetCapabilities() (*CameraInfo, error) {
+	caps, err := checkCapabilities(w.fd)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &CameraInfo{
+		Driver: strings.Trim(string(caps.driver[:]), "\x00"),
+		Card:   strings.Trim(string(caps.card[:]), "\x00"),
+	}, nil
 }
 
 // Returns image formats supported by the device alongside with
