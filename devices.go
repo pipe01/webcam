@@ -45,12 +45,7 @@ func ListDevices() ([]CameraInfo, error) {
 			continue
 		}
 
-		cameras = append(cameras, CameraInfo{
-			Path:   path,
-			Driver: strings.Trim(string(caps.driver[:]), "\x00"),
-			Card:   strings.Trim(string(caps.card[:]), "\x00"),
-			Bus:    strings.Trim(string(caps.bus_info[:]), "\x00"),
-		})
+		cameras = append(cameras, caps.getCameraInfo(path))
 	}
 
 	return cameras, nil

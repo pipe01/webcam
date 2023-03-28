@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"strings"
 	"unsafe"
 
 	"github.com/blackjack/webcam/ioctl"
@@ -97,6 +98,15 @@ type v4l2_capability struct {
 	capabilities uint32
 	device_caps  uint32
 	reserved     [3]uint32
+}
+
+func (caps *v4l2_capability) getCameraInfo(path string) CameraInfo {
+	return CameraInfo{
+		Path:   path,
+		Driver: strings.Trim(string(caps.driver[:]), "\x00"),
+		Card:   strings.Trim(string(caps.card[:]), "\x00"),
+		Bus:    strings.Trim(string(caps.bus_info[:]), "\x00"),
+	}
 }
 
 type v4l2_fmtdesc struct {

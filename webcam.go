@@ -6,7 +6,6 @@ package webcam
 import (
 	"errors"
 	"reflect"
-	"strings"
 	"unsafe"
 
 	"golang.org/x/sys/unix"
@@ -18,6 +17,7 @@ type Webcam struct {
 	bufcount  uint32
 	buffers   [][]byte
 	streaming bool
+	path      string
 }
 
 type ControlID uint32
@@ -57,6 +57,7 @@ func Open(path string) (*Webcam, error) {
 	w := new(Webcam)
 	w.fd = uintptr(fd)
 	w.bufcount = 256
+	w.path = path
 	return w, nil
 }
 
@@ -67,10 +68,8 @@ func (w *Webcam) GetCapabilities() (*CameraInfo, error) {
 		return nil, err
 	}
 
-	return &CameraInfo{
-		Driver: strings.Trim(string(caps.driver[:]), "\x00"),
-		Card:   strings.Trim(string(caps.card[:]), "\x00"),
-	}, nil
+	info := caps.getCameraInfo(w.path)
+	return &info, nil
 }
 
 // Returns image formats supported by the device alongside with
