@@ -13,6 +13,7 @@ type CameraInfo struct {
 	Path   string
 	Driver string
 	Card   string
+	Bus    string
 }
 
 func ListDevices() ([]CameraInfo, error) {
@@ -48,6 +49,7 @@ func ListDevices() ([]CameraInfo, error) {
 			Path:   path,
 			Driver: strings.Trim(string(caps.driver[:]), "\x00"),
 			Card:   strings.Trim(string(caps.card[:]), "\x00"),
+			Bus:    strings.Trim(string(caps.bus_info[:]), "\x00"),
 		})
 	}
 
